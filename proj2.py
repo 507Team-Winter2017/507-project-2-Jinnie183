@@ -1,6 +1,7 @@
 #proj2.py
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
+import urllib
 import ssl
 
 ctx = ssl.create_default_context()
@@ -63,7 +64,8 @@ print("UMSI faculty directory emails\n")
 ### Your Problem 4 solution goes here
 baseurl = 'https://www.si.umich.edu'
 url4 = 'https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=4'
-html = urlopen(url4, context=ctx).read()
+req = urllib.request.Request(url4, None, {'User-Agent':'SI_CLASS'})
+html = urllib.request.urlopen(req, context=ctx)
 soup = BeautifulSoup(html, "html.parser")
 next_page = soup.find('a',{'title':'Go to next page'})
 alt_tags = [] 
@@ -77,7 +79,8 @@ while next_page:
 	next_page = soup.find('a',{'title':'Go to next page'})
 	try:
 		url4 = baseurl + next_page.get('href')
-		html = urlopen(url4, context=ctx).read()
+		req = urllib.request.Request(url4, None, {'User-Agent':'SI_CLASS'})
+		html = urllib.request.urlopen(req, context=ctx).read()
 		soup = BeautifulSoup(html, "html.parser")
 		content = soup.find('div', {'class':'view-content'})
 		a_tags = content.find_all('a')
@@ -91,7 +94,8 @@ while next_page:
 
 for i in range(len(alt_tags)):
 	url5 = baseurl + alt_tags[i]
-	html5 = urlopen(url5, context=ctx).read()
+	req = urllib.request.Request(url5, None, {'User-Agent':'SI_CLASS'})
+	html5 = urllib.request.urlopen(req, context=ctx).read()
 	soup = BeautifulSoup(html5, "html.parser")
 	content5 = soup.find('div', {'class':'column panel'})
 	print (str(i + 1) + ' ' + content5.a.get_text())
